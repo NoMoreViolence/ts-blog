@@ -15,7 +15,9 @@
     "noImplicitAny": true,
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": true
+    "noUnusedLocals": true,
+    // mobx를 사용하기 위해서 tsconfig 수정
+    "experimentalDecorators": true
   },
   "exclude": [
     "node_modules",
