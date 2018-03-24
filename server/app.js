@@ -22,20 +22,12 @@ app.set('jwt-secret', config.secret);
 app.use(express.static(path.join(__dirname, '../build')));
 
 // api 처음 받았을 때 줄 주소였는데
-app.get('/api/hello', function(req, res) {
-  let admin = new Admin();
-  ` `;
-  admin.id = 'hello';
-  admin.password = 'metoo';
-
-  admin.save(function(err) {
-    if (err) {
-      console.log('이런 에러가 나버렸넹');
-    }
-    console.log('에러 아니지롱~');
-  });
-
+app.get('/hello', function(req, res) {
   res.json({ message: 'HelloJwt' });
+});
+
+app.get('/search/*', function(req, res) {
+  res.json({ message: 'this is search' });
 });
 
 /* =======================
