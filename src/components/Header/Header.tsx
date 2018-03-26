@@ -1,12 +1,11 @@
 import * as React from 'react';
-import './Header.css';
 import {
   Container,
   Row,
   Col,
-  Form,
   InputGroup,
   Input,
+  Form,
   Button,
   Breadcrumb,
   BreadcrumbItem
@@ -20,34 +19,53 @@ interface HandleNameChangeInterface {
 }
 
 // state 설정
-class Header extends React.Component<{}, { search: string; url: string }> {
-  constructor(props: {}) {
-    super(props);
-    this.state = {
-      search: '',
-      url: '/search/'
-    };
-    // 바인딩!
-    this.handleChange = this.handleChange.bind(this);
-  }
+class Header extends React.Component<
+  { login: number; changeLogined: Function },
+  { message: string }
+> {
+  state = {
+    message: ''
+  };
 
   // 입력 state 업데이트
-  handleChange(e: HandleNameChangeInterface) {
+  handleChange = (e: HandleNameChangeInterface) => {
     this.setState({
-      search: e.target.value,
-      url: '/search/' + e.target.value
+      message: e.target.value
     });
-  }
 
-  // tslint:disable-next-line:no-any
-  handleSubmit = (e: any) => {
+    // tslint:disable-next-line:no-console
+    console.log(this.props.login);
+    // tslint:disable-next-line:semicolon
+  };
+
+  // Header Form 이벤트
+  handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    fetch(`/search/${this.state.search}`)
-      .then(res => res.json())
-      .then(res => {
-        // tslint:disable-next-line:no-console
-        console.log(res);
+    if (this.state.message !== '') {
+      // 메시지 보내기
+      fetch('/api/ripple/talk', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: this.state.message
+        }),
+        mode: 'cors'
       });
+      this.setState({
+        message: ''
+      });
+    }
+    // tslint:disable-next-line:semicolon
+  };
+
+  // 로그아웃 이벤트
+  signOut = () => {
+    localStorage.clear();
+    this.props.changeLogined(0);
+    // tslint:disable-next-line:no-console
+    console.log('로그아웃 하셨습니다 - Header.tsx');
     // tslint:disable-next-line:semicolon
   };
 
@@ -56,7 +74,9 @@ class Header extends React.Component<{}, { search: string; url: string }> {
       <Container>
         <Row>
           <Col>
-            <h1>IHP Blog</h1>
+            <h1>
+              <NavLink to="/">IHP Blog</NavLink>
+            </h1>
           </Col>
           <Col>
             <Breadcrumb>
@@ -67,6 +87,29 @@ class Header extends React.Component<{}, { search: string; url: string }> {
               <BreadcrumbItem>
                 <NavLink to="/category/Node.js">Node.js</NavLink>
               </BreadcrumbItem>
+              <BreadcrumbItem>
+                <NavLink to="/category/JavaScript">JavaScript</NavLink>
+              </BreadcrumbItem>
+              <BreadcrumbItem>
+                <NavLink to="/category/TypeScript">TypeScript</NavLink>
+              </BreadcrumbItem>
+              {this.props.login === 1 && (
+                <BreadcrumbItem>
+                  <NavLink to="/admin/post">관리자 포스터 작성</NavLink>
+                </BreadcrumbItem>
+              )}
+              {this.props.login === 1 && (
+                <BreadcrumbItem>
+                  <NavLink to="/" onClick={this.signOut}>
+                    Sign out
+                  </NavLink>
+                </BreadcrumbItem>
+              )}
+              {this.props.login === 0 && (
+                <BreadcrumbItem>
+                  <NavLink to="/admin/login">관리자 로그인</NavLink>
+                </BreadcrumbItem>
+              )}
               <BreadcrumbItem active={true}>Category</BreadcrumbItem>
             </Breadcrumb>
           </Col>
@@ -75,8 +118,13 @@ class Header extends React.Component<{}, { search: string; url: string }> {
           <Col>
             <Form onSubmit={this.handleSubmit}>
               <InputGroup>
-                <Input value={this.state.search} onChange={this.handleChange} />
-                <Button color="primary">Search</Button>
+                <Input
+                  placeholder="하고 싶은 말을 적어주세요!"
+                  value={this.state.message}
+                  onChange={this.handleChange}
+                  name="search"
+                />
+                <Button color="primary">Post</Button>
               </InputGroup>
             </Form>
           </Col>
