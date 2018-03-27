@@ -7,6 +7,9 @@ import Header from './components/Header/Header';
 import Content from './components/Content/Content';
 import Login from './components/Login/Login';
 
+// 알림
+import { ToastContainer, toast } from 'react-toastify';
+
 // 으어어어어리액트야
 class App extends React.Component<{}, {}> {
   state = {
@@ -14,12 +17,21 @@ class App extends React.Component<{}, {}> {
   };
 
   handleUpdate = (num: number) => {
-    // tslint:disable-next-line:no-console
     this.setState({
       logined: num
     });
+    // 상태 바
+    this.notify(num);
     // tslint:disable-next-line:semicolon
   };
+
+  // 상태 바
+  notify = (num: number) =>
+    // tslint:disable-next-line:semicolon
+    toast(
+      num === 1 ? '관리자 권한 상태입니다' : '관리자 권한 획득 실패 or 로그아웃'
+      // tslint:disable-next-line:semicolon
+    );
 
   // 토큰값 받아서 관리자 상태일 경우 관리자 메뉴 카테고리 출력
   HandleCheck = () => {
@@ -33,17 +45,26 @@ class App extends React.Component<{}, {}> {
       })
         .then(res => res.json())
         .then(res => {
-          // tslint:disable-next-line:no-console
-          console.log('현재 관리자 상태 - App.tsx');
-          this.setState({
-            logined: 1
-          });
+          if (res.success === true) {
+            // tslint:disable-next-line:no-console
+            console.log('현재 관리자 상태 - App.tsx');
+            this.notify(1);
+            this.setState({
+              logined: 1
+            });
+          } else {
+            // tslint:disable-next-line:no-console
+            console.log('비 정상적인 토큰 감지 - App.tsx');
+            this.notify(0);
+          }
         })
         .catch((error: string) => {
           // tslint:disable-next-line:no-console
           console.log('로그인 실패, or 인증 실패');
           throw error;
         });
+    } else {
+      toast('환영합니다!');
     }
     // tslint:disable-next-line:semicolon
   };
@@ -59,6 +80,7 @@ class App extends React.Component<{}, {}> {
     return (
       <BrowserRouter>
         <div className="App">
+          <ToastContainer />
           <Header login={logined} changeLogined={this.handleUpdate} />
           <Switch>
             {/* <Route exact={true} path="/" component={Main}/> */}
@@ -75,7 +97,7 @@ class App extends React.Component<{}, {}> {
               )}
             />
             {/* 어드민 페이지에서 post, 로그인한 사용자만 접근 가능하게 만들었음 */}
-            {this.state.logined === 1 && (
+            {logined === 1 && (
               <Route exact={true} path="/admin/post" component={Content} />
             )}
           </Switch>

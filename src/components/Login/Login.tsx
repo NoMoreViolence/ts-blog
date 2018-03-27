@@ -19,14 +19,16 @@ export default class Login extends React.Component<
 > {
   state = {
     username: '',
-    password: ''
+    password: '',
+    disable: true
   };
 
   // username, password 텍스트 변경 메소드
   handleChange = (e: HandleChangeInterface) => {
     // tslint:disable-next-line:no-console
     this.setState({
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
+      disable: false
     });
     // tslint:disable-next-line:semicolon
   };
@@ -56,8 +58,11 @@ export default class Login extends React.Component<
             localStorage.setItem('token', res.token);
             this.props.changeLogined(1);
             // tslint:disable-next-line:no-console
-            console.log('로그인 성공');
+            console.log('로그인 성공 - Login.tsx');
+            // URL 이동
             this.props.history.push('/');
+          } else {
+            this.props.changeLogined(0);
           }
         })
         .catch(function(error: string) {
@@ -102,7 +107,12 @@ export default class Login extends React.Component<
                 value={password}
                 onChange={this.handleChange}
               />
-              <Button color="primary" size="lg" block={true}>
+              <Button
+                color="primary"
+                size="lg"
+                block={true}
+                disabled={this.state.disable}
+              >
                 Login
               </Button>
             </Form>

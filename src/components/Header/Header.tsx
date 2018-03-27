@@ -13,6 +13,9 @@ import {
 
 import { NavLink } from 'react-router-dom';
 
+// 알림
+import { ToastContainer, toast } from 'react-toastify';
+
 // 인풋 인터페이스
 interface HandleNameChangeInterface {
   target: HTMLInputElement;
@@ -32,9 +35,6 @@ class Header extends React.Component<
     this.setState({
       message: e.target.value
     });
-
-    // tslint:disable-next-line:no-console
-    console.log(this.props.login);
     // tslint:disable-next-line:semicolon
   };
 
@@ -57,6 +57,7 @@ class Header extends React.Component<
         message: ''
       });
     }
+    toast('메시지가 전송 되었습니다 !');
     // tslint:disable-next-line:semicolon
   };
 
@@ -95,7 +96,7 @@ class Header extends React.Component<
               </BreadcrumbItem>
               {this.props.login === 1 && (
                 <BreadcrumbItem>
-                  <NavLink to="/admin/post">관리자 포스터 작성</NavLink>
+                  <NavLink to="/admin/post">관리자 페이지</NavLink>
                 </BreadcrumbItem>
               )}
               {this.props.login === 1 && (
@@ -116,6 +117,7 @@ class Header extends React.Component<
         </Row>
         <Row>
           <Col>
+            <ToastContainer />
             <Form onSubmit={this.handleSubmit}>
               <InputGroup>
                 <Input
