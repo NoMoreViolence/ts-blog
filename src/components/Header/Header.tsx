@@ -14,7 +14,7 @@ import {
 import { NavLink } from 'react-router-dom';
 
 // 알림
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 
 // 인풋 인터페이스
 interface HandleNameChangeInterface {
@@ -117,7 +117,6 @@ class Header extends React.Component<
         </Row>
         <Row>
           <Col>
-            <ToastContainer />
             <Form onSubmit={this.handleSubmit}>
               <InputGroup>
                 <Input
