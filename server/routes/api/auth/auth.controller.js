@@ -1,7 +1,8 @@
 // jwt 토큰 발급하기 위해서 토큰 불러옵니다 어허~
 const jwt = require('jsonwebtoken');
 // 디비 모델을 불러옵니다
-const User = require('./../../../models/Admin');
+const User = require('./../../../models/User');
+// 암호화
 const crypto = require('crypto');
 
 /*
@@ -125,7 +126,7 @@ exports.login = (req, res) => {
   const respond = token => {
     console.log('로그인 성공');
     res.json({
-      message: 'logged in successfully',
+      message: true,
       token
     });
   };
@@ -133,7 +134,7 @@ exports.login = (req, res) => {
   // error occured
   const onError = error => {
     res.status(403).json({
-      message: error.message
+      message: false
     });
   };
 
