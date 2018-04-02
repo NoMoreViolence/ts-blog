@@ -55,7 +55,7 @@ export default class Login extends React.Component<
         .then(res => {
           if (res.message === true) {
             // 로그인 성공
-            localStorage.setItem('token', res.token);
+            sessionStorage.setItem('token', res.token);
             this.props.changeLogined(1);
             // tslint:disable-next-line:no-console
             console.log('로그인 성공 - Login.tsx');
@@ -65,7 +65,7 @@ export default class Login extends React.Component<
             this.props.changeLogined(0);
           }
         })
-        .catch(function(error: string) {
+        .catch(error => {
           throw error;
         });
 
