@@ -30,7 +30,10 @@ interface Dropdown {
   currentTarget: { textContent: string };
 }
 
-class Change extends React.Component<{ category: Array<Category> }, {}> {
+class Change extends React.Component<
+  { loadCategory: Function; category: Array<Category> },
+  {}
+> {
   state = {
     CurrentCategory: '변경할 카테고리 선택', // [현재의 카테고리]
     changeCategory: '', // [바꿀 카테고리]
@@ -79,6 +82,7 @@ class Change extends React.Component<{ category: Array<Category> }, {}> {
           }
           // tslint:disable-next-line:no-console
           console.log(res.message);
+          this.props.loadCategory();
         })
         .catch(error => {
           // tslint:disable-next-line:no-console

@@ -30,7 +30,10 @@ interface Dropdown {
   currentTarget: { textContent: string };
 }
 
-class Delete extends React.Component<{ category: Array<Category> }, {}> {
+class Delete extends React.Component<
+  { loadCategory: Function; category: Array<Category> },
+  {}
+> {
   state = {
     selectedWillDelete: '삭제할 카테고리 선택', // [현재 카테고리]
     doubleCheck: '', // [입력 카테고리]
@@ -72,6 +75,7 @@ class Delete extends React.Component<{ category: Array<Category> }, {}> {
           }
           // tslint:disable-next-line:no-console
           console.log(res.message);
+          this.props.loadCategory();
         })
         .catch(error => {
           toast('이런, 알 수 없는 이유로 실패하고 말았어요');
@@ -114,7 +118,7 @@ class Delete extends React.Component<{ category: Array<Category> }, {}> {
       categoryDeleteDropdown
     } = this.state;
 
-    // 데이터 받아서 정렬
+    // [데이터 받아서 정렬]
     const CurrentCategoryDeleteBar = (data: Array<Category>) => {
       return data.map((object, i) => {
         return (
