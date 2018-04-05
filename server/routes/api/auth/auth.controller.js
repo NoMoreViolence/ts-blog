@@ -87,7 +87,12 @@ exports.login = (req, res) => {
   const { username, password } = req.body;
   const secret = req.app.get('jwt-secret');
 
-  // check the user info & generate the jwt
+  const adminCheck = user => {
+    if (user.admin === true) return user;
+    throw new Error('Not Admin');
+  };
+
+  // 유저를 체크하고 JWT 토큰을 발급합니다
   const check = user => {
     if (!user) {
       // user does not exist
@@ -140,6 +145,7 @@ exports.login = (req, res) => {
 
   // find the user
   User.findOneByUsername(username)
+    .then(adminCheck)
     .then(check)
     .then(respond)
     .catch(onError);

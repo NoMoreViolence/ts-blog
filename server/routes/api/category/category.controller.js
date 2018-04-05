@@ -55,11 +55,10 @@ exports.picked = (req, res) => {
 exports.create = (req, res) => {
   const { category } = req.body;
 
-  // 중복된 카테고리인지 확인함
+  // 중복된 카테고리나, 입력값이 없을 때 오류를 보냄
   const create = exists => {
-    console.log(exists);
     if (exists) {
-      throw new Error('Category Exists');
+      throw new Error('입력값이 없거나 중복된 값 입니다');
     } else {
       return Category.createCategory(category); // 카테고리 생성
     }
@@ -69,7 +68,8 @@ exports.create = (req, res) => {
   const respond = () => {
     res.json({
       success: true,
-      message: 'Create Category Success'
+      message: 'Create Category Success',
+      category
     });
   };
 
@@ -99,15 +99,23 @@ exports.create = (req, res) => {
 exports.change = (req, res) => {
   const { category, changeCategory } = req.body;
 
-  // 카테고리 삭제 부분
+  const trimCheck = exists => {
+    if (changeCategory.trim() === '') {
+      // 변경할 카테고리가 없음
+      throw new Error('입력값이 없습니다');
+    }
+    return exists;
+  };
+
+  // 카테고리 변경 부분
   const change = exists => {
     if (exists) {
       console.log(`${exists.category} will be changeed to ${changeCategory}`);
       // 카테고리 변경
       return Category.changeCategory(category, changeCategory); // 카테고리 삭제
     } else {
-      // 삭제할 카테고리가 없음
-      throw new Error('Category does not exist - Category.delete()');
+      // 변경할 카테고리가 없음
+      throw new Error('바꿀 카테고리가 존재하지 않습니다');
     }
   };
 
@@ -116,7 +124,8 @@ exports.change = (req, res) => {
     res.json({
       success: true,
       message: `Change Category Success => ${category} to ${changeCategory}`,
-      result: changeCategory
+      oldCategory: category,
+      newCategory: changeCategory
     });
   };
 
@@ -129,6 +138,7 @@ exports.change = (req, res) => {
   };
 
   Category.findSameCategory(category)
+    .then(trimCheck)
     .then(change)
     .then(respond)
     .catch(onError);
@@ -143,7 +153,12 @@ exports.change = (req, res) => {
 */
 // 카테고리 삭제
 exports.delete = (req, res) => {
-  const { category } = req.body;
+  const { category, categoryDoubleCheck } = req.body;
+
+  const doubleCheck = exist => {
+    if (category === categoryDoubleCheck) return exist;
+    throw new Error('같은 입력값이 아닙니다');
+  };
 
   // 카테고리 삭제 부분
   const remove = exists => {
@@ -153,7 +168,7 @@ exports.delete = (req, res) => {
       return Category.deleteCategory(category); // 카테고리 삭제
     } else {
       // 삭제할 카테고리가 없음
-      throw new Error('Category does not exist - Category.delete()');
+      throw new Error('삭제할 카테고리가 없습니다');
     }
   };
 
@@ -161,7 +176,8 @@ exports.delete = (req, res) => {
   const respond = () => {
     res.json({
       success: true,
-      message: 'Delete Category Success'
+      message: 'Delete Category Success',
+      category
     });
   };
 
@@ -174,6 +190,7 @@ exports.delete = (req, res) => {
   };
 
   Category.findSameCategory(category)
+    .then(doubleCheck)
     .then(remove)
     .then(respond)
     .catch(onError);

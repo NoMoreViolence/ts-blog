@@ -14,7 +14,7 @@ Category.statics.findSameCategory = function(category) {
 
 // 전체 카테고리 출력
 Category.statics.findAll = function() {
-  return this.find({});
+  return this.find().sort({ category: 1 });
 };
 
 // 카테고리 생성
