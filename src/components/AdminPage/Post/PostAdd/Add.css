@@ -1,5 +1,12 @@
-.addEditorShowNone {
-  border: 1px solid rgba(0, 0, 0, .125);
-  padding: 1%;
-  margin: 1%;
+.add-container {
+  margin-top: 1%;
+  margin-bottom: 4%;
+}
+
+.add-input {
+  margin-top: 2%;
+}
+
+.postarea {
+  margin-top: 2%;
 }

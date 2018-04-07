@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const path = require('path');
+
 const app = express();
 
 // 몽구스를 받아온다!
@@ -22,11 +23,11 @@ app.set('jwt-secret', config.secret);
 app.use(express.static(path.join(__dirname, '../build')));
 
 // api 처음 받았을 때 줄 주소였는데
-app.get('/hello', function(req, res) {
+app.get('/hello', (req, res) => {
   res.json({ message: 'HelloJwt' });
 });
 
-app.get('/search/*', function(req, res) {
+app.post('/message/talk', (req, res) => {
   res.json({ message: 'this is search' });
 });
 
@@ -38,15 +39,15 @@ const db = mongoose.connection;
 // 에러나면
 db.on('error', console.error.bind(console, 'connection error:'));
 // 연결성공하면
-db.once('open', function() {
+db.once('open', () => {
   // we're connected!
   console.log("We're connnected");
 });
 
-// 로긴 할때 받아오려는 겁니다...
+// 모든 api의 요청과 반환을 돌렸습니다
 app.use('/api', require('./routes/api'));
 
 // 서버 열어 버리기~
 app.listen(port, () => {
-  console.log('server is running at http://localhost:' + port);
+  console.log(`server is running at http://localhost:${port}`);
 });

@@ -31,12 +31,12 @@ class Category extends React.Component<
     return (
       <div>
         <Container className="category">
-          <Row className="big-logo">
+          <Row className="category-big-logo">
             <Col>
               <h1>Category</h1>
             </Col>
           </Row>
-          <Row className="small-logo">
+          <Row className="category-small-logo">
             <Col>
               <p>현재 카테고리</p>
             </Col>
@@ -50,9 +50,9 @@ class Category extends React.Component<
               </Breadcrumb>
             </Col>
           </Row>
-          <Row className="small-logo">
+          <Row className="category-small-logo">
             <Col>
-              <p>카테고리 추가</p>
+              <p className="input">카테고리 추가</p>
             </Col>
           </Row>
           <Row>
@@ -61,9 +61,9 @@ class Category extends React.Component<
               <Add loadCategory={this.props.loadCategory} />
             </Col>
           </Row>
-          <Row className="small-logo">
+          <Row className="category-small-logo">
             <Col>
-              <p>카테고리 변경</p>
+              <p className="change">카테고리 변경</p>
             </Col>
           </Row>
           <Row>
@@ -75,9 +75,9 @@ class Category extends React.Component<
               />
             </Col>
           </Row>
-          <Row className="small-logo">
+          <Row className="category-small-logo">
             <Col>
-              <p>카테고리 삭제</p>
+              <p className="delete">카테고리 삭제</p>
             </Col>
           </Row>
           <Row>

@@ -1,10 +1,11 @@
 // 모듈
 import { Route, Switch, BrowserRouter } from 'react-router-dom';
 import * as React from 'react';
+import './App.css';
 
 // 컴포넌트들
 import Header from './components/Header/Header';
-import Content from './components/Content/Content';
+import AdminPage from './components/AdminPage/AdminPage';
 import Login from './components/Login/Login';
 
 // 알림
@@ -13,7 +14,8 @@ import { ToastContainer, toast } from 'react-toastify';
 // 으어어어어리액트야
 class App extends React.Component<{}, {}> {
   state = {
-    logined: 0
+    logined: 0,
+    category: []
   };
 
   handleUpdate = (num: number) => {
@@ -33,14 +35,14 @@ class App extends React.Component<{}, {}> {
       // tslint:disable-next-line:semicolon
     );
 
-  // 토큰값 받아서 관리자 상태일 경우 관리자 메뉴 카테고리 출력
-  HandleCheck = () => {
+  // [로그인 체크]
+  handleCheck = () => {
     // 일단 토큰 값이존재할 때만
-    if (localStorage.getItem('token') !== null) {
+    if (sessionStorage.getItem('token') !== null) {
       fetch('/api/auth/check', {
         method: 'GET',
         headers: {
-          'x-access-token': `${localStorage.getItem('token')}`
+          'x-access-token': `${sessionStorage.getItem('token')}`
         }
       })
         .then(res => res.json())
@@ -69,9 +71,37 @@ class App extends React.Component<{}, {}> {
     // tslint:disable-next-line:semicolon
   };
 
+  // [공통] 카테고리 가져오기
+  loadCategory = () => {
+    fetch('/api/category/all', {
+      method: 'GET',
+      headers: {}
+    })
+      .then(res => {
+        return res.json();
+      })
+      .then(res => {
+        this.setState({
+          category: res.category
+        });
+      })
+      .catch((error: string) => {
+        // tslint:disable-next-line:no-console
+        console.log('카테고리 데이터 가져오기 실패');
+        throw error;
+      });
+
+    // tslint:disable-next-line:semicolon
+  };
+
   // 모든 컴포넌트 출력된 후 확인
   componentDidMount() {
-    this.HandleCheck();
+    this.loadCategory();
+    this.handleCheck();
+  }
+
+  shouldComponentUpdate(nextProps: {}, nextState: {}) {
+    return nextProps !== this.state;
   }
 
   render() {
@@ -80,8 +110,13 @@ class App extends React.Component<{}, {}> {
     return (
       <BrowserRouter>
         <div className="App">
+          {/* 알림 보여주는 HTML 태크, 이것만 해 놓으면 알림 뜰때 자동으로 생겼다가 사라짐 */}
           <ToastContainer />
-          <Header login={logined} changeLogined={this.handleUpdate} />
+          <Header
+            login={logined}
+            changeLogined={this.handleUpdate}
+            category={this.state.category}
+          />
           <Switch>
             {/* <Route exact={true} path="/" component={Main}/> */}
           </Switch>
@@ -98,7 +133,17 @@ class App extends React.Component<{}, {}> {
             />
             {/* 어드민 페이지에서 post, 로그인한 사용자만 접근 가능하게 만들었음 */}
             {logined === 1 && (
-              <Route exact={true} path="/admin/post" component={Content} />
+              <Route
+                exact={true}
+                path="/admin/post"
+                render={props => (
+                  <AdminPage
+                    loadCategory={this.loadCategory}
+                    category={this.state.category}
+                    {...props}
+                  />
+                )}
+              />
             )}
           </Switch>
         </div>

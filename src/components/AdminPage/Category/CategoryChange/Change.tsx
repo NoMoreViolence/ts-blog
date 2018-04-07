@@ -43,13 +43,13 @@ class Change extends React.Component<
   // [카테고리 변경 이벤트]
   handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     const { changeCategory, CurrentCategory } = this.state;
-    // Form 이벤트 막기 및 이벤트 버블링 기
+    // Form 이벤트 막기 및 이벤트 버블링 방지
     e.preventDefault();
     // 아무 데이터도 입력이 안 된게 아니고, 변경할 카테고리를 선택했을 경우, 같은 카테고리 이름으로 전송 불가
     if (
       changeCategory !== '' &&
       CurrentCategory !== '변경할 카테고리 선택' &&
-      CurrentCategory !== changeCategory
+      CurrentCategory.trim() !== changeCategory.trim()
     ) {
       fetch('/api/category/change', {
         method: 'PUT',
@@ -58,8 +58,8 @@ class Change extends React.Component<
         },
         body: JSON.stringify({
           token: sessionStorage.getItem('token'),
-          category: CurrentCategory,
-          changeCategory: changeCategory
+          category: CurrentCategory.trim(),
+          changeCategory: changeCategory.trim()
         }),
         mode: 'cors'
       })
@@ -78,7 +78,7 @@ class Change extends React.Component<
                 ' " 로 변경되었습니다'
             );
           } else {
-            toast('입력값이 중복되었거나 없습니다');
+            toast('입력값이 잘못되었거나 없습니다');
           }
           // tslint:disable-next-line:no-console
           console.log(res.message);
@@ -90,7 +90,11 @@ class Change extends React.Component<
           throw error;
         });
     } else {
-      toast('카테고리를 선택하시고, 글자를 입력한 후 전송해주세요');
+      if (CurrentCategory.trim() === changeCategory.trim()) {
+        toast('같은 카테고리로는 변경할 필요가 없습니다');
+      } else {
+        toast('카테고리를 선택하시고, 글자를 입력한 후 전송해주세요');
+      }
     }
     // tslint:disable-next-line:semicolon
   };
@@ -156,6 +160,7 @@ class Change extends React.Component<
             </Dropdown>
             <Input
               name="changeCategory"
+              placeholder="변경할 카테고리 이름 입력"
               value={changeCategory}
               onChange={this.handleChange}
             />

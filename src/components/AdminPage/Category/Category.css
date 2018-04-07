@@ -2,10 +2,22 @@
   margin-top: 8%;
 }
 
-.big-logo {
+.category-big-logo {
   margin: 3%;
 }
 
-.small-logo {
+.category-small-logo {
   margin-top: 3%;
+}
+
+.input {
+  color: rgb(87, 168, 223);
+}
+
+.change {
+  color: rgb(20, 175, 149);
+}
+
+.delete {
+  color: rgb(206, 42, 42);
 }

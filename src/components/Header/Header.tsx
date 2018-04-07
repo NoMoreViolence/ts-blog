@@ -17,13 +17,16 @@ import { NavLink } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 // 인풋 인터페이스
-interface HandleNameChangeInterface {
+interface HandleChangeInterface {
   target: HTMLInputElement;
 }
 
-// state 설정
+interface Category {
+  category: string;
+}
+
 class Header extends React.Component<
-  { login: number; changeLogined: Function },
+  { login: number; changeLogined: Function; category: Array<Category> },
   { message: string }
 > {
   state = {
@@ -31,7 +34,7 @@ class Header extends React.Component<
   };
 
   // 입력 state 업데이트
-  handleChange = (e: HandleNameChangeInterface) => {
+  handleChange = (e: HandleChangeInterface) => {
     this.setState({
       message: e.target.value
     });
@@ -52,18 +55,27 @@ class Header extends React.Component<
           message: this.state.message
         }),
         mode: 'cors'
-      });
-      this.setState({
-        message: ''
-      });
+      })
+        .then(res => res.json())
+        .then(res => {
+          this.setState({
+            message: ''
+          });
+          toast('메시지가 전송 되었습니다 !');
+        })
+        .catch(error => {
+          toast('이런, 알 수 없는 이유로 실패하고 말았어요');
+          // tslint:disable-next-line:no-console
+          console.log('메시지 보내기 실패');
+          throw error;
+        });
     }
-    toast('메시지가 전송 되었습니다 !');
     // tslint:disable-next-line:semicolon
   };
 
   // 로그아웃 이벤트
   signOut = () => {
-    localStorage.clear();
+    sessionStorage.clear();
     this.props.changeLogined(0);
     // tslint:disable-next-line:no-console
     console.log('로그아웃 하셨습니다 - Header.tsx');
@@ -71,6 +83,18 @@ class Header extends React.Component<
   };
 
   render() {
+    // 데이터 받아서 정렬
+    const CurrentCategoryChangeBar = (data: Array<Category>) => {
+      return data.map((object, i) => {
+        const url = `/category/${object.category}`;
+        return (
+          <BreadcrumbItem key={i}>
+            <NavLink to={url}>{object.category}</NavLink>
+          </BreadcrumbItem>
+        );
+      });
+    };
+
     return (
       <Container>
         <Row>
@@ -82,18 +106,7 @@ class Header extends React.Component<
           <Col>
             <Breadcrumb>
               <BreadcrumbItem />
-              <BreadcrumbItem>
-                <NavLink to="/category/React.js">React.js</NavLink>
-              </BreadcrumbItem>
-              <BreadcrumbItem>
-                <NavLink to="/category/Node.js">Node.js</NavLink>
-              </BreadcrumbItem>
-              <BreadcrumbItem>
-                <NavLink to="/category/JavaScript">JavaScript</NavLink>
-              </BreadcrumbItem>
-              <BreadcrumbItem>
-                <NavLink to="/category/TypeScript">TypeScript</NavLink>
-              </BreadcrumbItem>
+              {CurrentCategoryChangeBar(this.props.category)}
               {this.props.login === 1 && (
                 <BreadcrumbItem>
                   <NavLink to="/admin/post">관리자 페이지</NavLink>
@@ -125,7 +138,7 @@ class Header extends React.Component<
                   onChange={this.handleChange}
                   name="search"
                 />
-                <Button color="primary">Post</Button>
+                <Button color="primary">하고 싶은 말 보내기</Button>
               </InputGroup>
             </Form>
           </Col>

@@ -45,11 +45,8 @@ class Delete extends React.Component<
     const { selectedWillDelete, doubleCheck } = this.state;
     // Form 이벤트 막기 및 이벤트 버블링 기
     e.preventDefault();
-    // 아무 데이터도 입력이 안 된게 아니고, 변경할 카테고리를 선택했을 경우
-    if (
-      selectedWillDelete !== '삭제할 카테고리 선택' &&
-      selectedWillDelete === doubleCheck
-    ) {
+    // 아무 데이터도 입력이 안 된게 아닌 상태에서 전송 버튼을 눌렀을 경우
+    if (selectedWillDelete !== '삭제할 카테고리 선택') {
       fetch('/api/category/delete', {
         method: 'DELETE',
         headers: {
@@ -57,8 +54,8 @@ class Delete extends React.Component<
         },
         body: JSON.stringify({
           token: sessionStorage.getItem('token'),
-          category: selectedWillDelete,
-          categoryDoubleCheck: doubleCheck
+          category: selectedWillDelete.trim(),
+          categoryDoubleCheck: doubleCheck.trim()
         }),
         mode: 'cors'
       })
@@ -149,6 +146,7 @@ class Delete extends React.Component<
             </Dropdown>
             <Input
               name="doubleCheck"
+              placeholder="삭제할 카테고리 중복확인"
               value={doubleCheck}
               onChange={this.handleChange}
             />
