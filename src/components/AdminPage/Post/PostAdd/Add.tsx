@@ -95,7 +95,7 @@ class Add extends React.Component<
     e.preventDefault();
 
     // state 매쉬 문법으로 정의
-    const { title, subTitle, currentCategory } = this.state;
+    const { title, subTitle, currentCategory, editorState } = this.state;
 
     // 카테고리 추가할 때 꼭 필요한 조건, 제목, 섭타이틀, 현재 카테고리
     if (
@@ -113,22 +113,27 @@ class Add extends React.Component<
           category: currentCategory.trim(), // 현재 카테고리
           title: title.trim(), // 타이틀
           subTitle: subTitle.trim(), // 서브 타이틀
-          mainText: '' // 메인 내용
+          mainText: editorState // 메인 내용
         }),
         mode: 'cors'
       })
         .then(res => res.json())
         .then(res => {
-          if (res.message === true) {
+          if (res.success === true) {
             // 포스트 추가 성공일 때
             console.log(res.message);
             toast('포스트가 추가 성공!');
+            console.log(res.result);
           } else {
             // 포스트 추가 실패
             console.log(res.message);
             toast('포스트 추가 실패!');
             toast(res.message);
           }
+        })
+        .catch(res => {
+          console.log(res.message);
+          toast('알 수 없는 서버의 오류');
         });
     } else {
       toast('카테고리, 포스트 이름, 포스트 설명을 써 주세요');
@@ -139,12 +144,12 @@ class Add extends React.Component<
   render() {
     // state 정의
     const {
-      title,
-      subTitle,
-      currentCategory,
-      categoryChangeDropdown,
-      tempSavedCategory,
-      categorySavedDropdown
+      title, // 타이틀
+      subTitle, // 부제
+      currentCategory, // 추가할 카테고리 현재
+      categoryChangeDropdown, // 추가할 카테고리 누르면 드롭다운 ㄱ
+      tempSavedCategory, // 임시 저장 카테고리
+      categorySavedDropdown // 임시 저장된 카테고리 누르면 드롭다운
     } = this.state;
 
     // 데이터 받아서 정렬
@@ -188,7 +193,9 @@ class Add extends React.Component<
             </DropdownMenu>
           </Dropdown>
         </div>
+        {/* 임시저장 포스트 불러오는 부분, 나중에 작업 예정 */}
 
+        {/* 포스트 추가 부분 */}
         <div className="post-name-and-info">
           <InputGroup>
             <Dropdown
@@ -222,7 +229,7 @@ class Add extends React.Component<
             placeholder="포스트 간략한 설명"
           />
         </div>
-
+        {/* 에디터 */}
         <div className="postarea">
           <ReactQuill
             theme="snow"
@@ -232,15 +239,9 @@ class Add extends React.Component<
             modules={this.props.modules}
           />
         </div>
-
+        {/* 전송! */}
         <div className="posting">
-          <Button
-            size="lg"
-            block={true}
-            outline={true}
-            color="primary"
-            onClick={this.post}
-          >
+          <Button size="lg" block={true} color="primary" onClick={this.post}>
             포스팅 !
           </Button>
         </div>

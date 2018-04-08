@@ -88,7 +88,7 @@ exports.create = (req, res) => {
 };
 
 /*
-    PUT /api/category/change
+    PATCH /api/category/change
     {
         token,
         category,
@@ -120,12 +120,13 @@ exports.change = (req, res) => {
   };
 
   // 응답
-  const respond = () => {
+  const respond = result => {
     res.json({
       success: true,
       message: `Change Category Success => ${category} to ${changeCategory}`,
       oldCategory: category,
-      newCategory: changeCategory
+      newCategory: changeCategory,
+      result
     });
   };
 

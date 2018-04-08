@@ -1,13 +1,17 @@
 const Post = require('./../../../models/Post');
+const Category = require('./../../../models/Category');
 
 /*
-    POST /api/category/create
+    POST /api/post/create
     {
         token,
-        category
+        category,
+        title,
+        subTitle,
+        mainText
     }
 */
-// 카테고리 생성
+// 포스트 생성
 exports.create = (req, res) => {
   const { category, title, subTitle, mainText } = req.body;
 
@@ -20,13 +24,20 @@ exports.create = (req, res) => {
     }
   };
 
+  // 포스트 생성 후 같은 카테고리 포스트의 _id 값 객체만을 전달받았음
+  const categoryRef = async newPosts => {
+    // 카테고리와 함께 객체를 보냄
+    return await Category.update(newPosts, category);
+  };
+
   // 응답
-  const respond = () => {
+  const respond = result => {
     res.json({
       success: true,
       message: 'Create Category Success',
       title,
-      subTitle
+      subTitle,
+      result
     });
   };
 
@@ -40,6 +51,7 @@ exports.create = (req, res) => {
 
   Post.checkTitle(title)
     .then(create)
+    .then(categoryRef)
     .then(respond)
     .catch(onError);
 };

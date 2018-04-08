@@ -22,6 +22,7 @@ Post.statics.checkTitle = function(title) {
   return this.findOne({ title }).exec();
 };
 
+// 포스트 생성 메소드
 Post.statics.createPost = function(category, title, subTitle, mainText) {
   const post = new this({
     title,
@@ -29,13 +30,30 @@ Post.statics.createPost = function(category, title, subTitle, mainText) {
     mainText,
     category
   });
+  // 일단 포스트를 생성하고
+  post.save();
+  // 카테고리의 Ref 업데이트 해야 되기 때문에 생성된 후의 같은 카테고리의 _id값만 리턴해줌!
+  return this.find(
+    { category },
+    {
+      title: 0,
+      subTitle: 0,
+      mainText: 0,
+      category: 0,
+      comment: 0,
+      date: 0
+    }
+  ).exec();
+};
 
-  return post.save();
+// 포스트 카테고리 변경 메소드
+Post.statics.changeCategory = function(category, change) {
+  return this.findAndUpdate({ category }, { category: change });
 };
 
 // 포스트 댓글 불러오는 함수
-Post.statics.findComment = function(category) {
-  return this.find({ category }).exec();
+Post.statics.findComment = function(title) {
+  return this.find({ title }).exec();
 };
 
 // 포스트 삭제
