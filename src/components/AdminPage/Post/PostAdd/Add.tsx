@@ -1,12 +1,6 @@
 import * as React from 'react';
 import './Add.css';
-import Draft, {
-  draftToHtml,
-  EmptyState,
-  rawToDraft,
-  draftToRaw
-  // draftStateToHTML
-} from 'react-wysiwyg-typescript';
+import ReactQuill from 'react-quill'; // 리액트 편집기 모듈 다운로드
 import {
   Input,
   InputGroup,
@@ -35,7 +29,12 @@ interface Dropdown {
 }
 
 class Add extends React.Component<
-  { loadCategory: Function; category: Array<Category> },
+  {
+    loadCategory: Function;
+    category: Array<Category>;
+    formats: Array<string>;
+    modules: object;
+  },
   {}
 > {
   state = {
@@ -44,8 +43,7 @@ class Add extends React.Component<
 
     title: '', // [포스트 이름]
     subTitle: '', // [포스트 간략 설명]
-    editorState: EmptyState, // [마크다운 에디터]
-    serverSendFile: { blocks: [] },
+    editorState: '', // [마크다운 에디터]
 
     tempSavedCategory: '임시저장된 포스트 선택',
     categorySavedDropdown: false // [추가할 카테고리 드롭다운 버튼]
@@ -58,54 +56,47 @@ class Add extends React.Component<
     });
     // tslint:disable-next-line:semicolon
   };
-
-  // 마크다운
-  handleMarkDownChange = (e: TextEdit) => {
+  // 에디터 state 업데이트
+  handleEditorChange = (e: string) => {
     this.setState({
-      serverSendFile: e
+      editorState: e
     });
-    console.log(this.state.serverSendFile);
     // tslint:disable-next-line:semicolon
   };
 
-  // [드롭다운 토글] 카테고리 나오고 안나오고
+  // [현재 드롭다운 토글] 카테고리 나오고 안나오고
   handleCategoryChangeToggle = () => {
     this.setState({
       categoryChangeDropdown: !this.state.categoryChangeDropdown
     });
     // tslint:disable-next-line:semicolon
   };
-
-  // [드롭다운 토글] 카테고리 나오고 안나오고
+  // [임시저장 드롭다운 토글] 카테고리 나오고 안나오고
   handleSavedCategoryChangeToggle = () => {
     this.setState({
       categorySavedDropdown: !this.state.categorySavedDropdown
     });
     // tslint:disable-next-line:semicolon
   };
-
-  // [드롭다운 변경] 카테고리 선택시 데이터 바꿔주기
+  // [현재 드롭다운 변경] 카테고리 선택시 데이터 바꿔주기
   handleCurrentCategory = (e: Dropdown) => {
     this.setState({ currentCategory: e.currentTarget.textContent });
     // tslint:disable-next-line:semicolon
   };
-
-  // [드롭다운 변경] 카테고리 선택시 데이터 바꿔주기
+  // [임시저장 드롭다운 변경] 카테고리 선택시 데이터 바꿔주기
   handleSavedCurrentCategory = (e: Dropdown) => {
     this.setState({ tempSavedCategory: e.currentTarget.textContent });
     // tslint:disable-next-line:semicolon
   };
 
+  // 포스팅 함수
   post = (e: React.FormEvent<HTMLFormElement>) => {
     //  이벤트 버블링 방지용
     e.preventDefault();
 
     // state 매쉬 문법으로 정의
-    const { title, subTitle, currentCategory, serverSendFile } = this.state;
-    const toRaw = draftToRaw(serverSendFile.blocks);
-    const toDraft = rawToDraft(toRaw);
-    const html = draftToHtml(toDraft);
-    console.log(html);
+    const { title, subTitle, currentCategory } = this.state;
+
     // 카테고리 추가할 때 꼭 필요한 조건, 제목, 섭타이틀, 현재 카테고리
     if (
       title !== '' &&
@@ -122,14 +113,22 @@ class Add extends React.Component<
           category: currentCategory.trim(), // 현재 카테고리
           title: title.trim(), // 타이틀
           subTitle: subTitle.trim(), // 서브 타이틀
-          mainText: html // 메인 내용
+          mainText: '' // 메인 내용
         }),
         mode: 'cors'
       })
         .then(res => res.json())
         .then(res => {
-          //  응답 출력
-          console.log(res);
+          if (res.message === true) {
+            // 포스트 추가 성공일 때
+            console.log(res.message);
+            toast('포스트가 추가 성공!');
+          } else {
+            // 포스트 추가 실패
+            console.log(res.message);
+            toast('포스트 추가 실패!');
+            toast(res.message);
+          }
         });
     } else {
       toast('카테고리, 포스트 이름, 포스트 설명을 써 주세요');
@@ -166,6 +165,7 @@ class Add extends React.Component<
 
     return (
       <div className="add-container">
+        {/* 임시저장 포스트 불러오는 부분, 나중에 작업 예정 */}
         <div className="temp-save">
           <Button color="primary">임시 저장</Button>
           <Dropdown
@@ -224,7 +224,13 @@ class Add extends React.Component<
         </div>
 
         <div className="postarea">
-          <Draft onChange={this.handleMarkDownChange} />
+          <ReactQuill
+            theme="snow"
+            onChange={this.handleEditorChange}
+            value={this.state.editorState}
+            formats={this.props.formats}
+            modules={this.props.modules}
+          />
         </div>
 
         <div className="posting">
