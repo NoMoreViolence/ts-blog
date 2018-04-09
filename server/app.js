@@ -13,8 +13,8 @@ const config = require('./config.js');
 // 포트 설정
 const port = process.env.port || 3001;
 // 바디 파서 설정이요 JSON 코드 받을 때 필요합니당
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }));
+app.use(bodyParser.json({ limit: '50mb' }));
 // 개발 모드 설정이요
 app.use(morgan('dev'));
 // 예 이걸로 시크릿키 받아오구요
