@@ -33,15 +33,44 @@ exports.all = (req, res) => {
     .then(respond) // 응답
     .catch(onError); // 에러
 };
-/*
-    GET /api/category/picked/:CartName
-    {
 
-    }
+/*
+    GET /api/category/postNames/:categoryName
+    {}
 */
-// 특정 카테고리 정보 가져오기, 카테고리의 포스트 전부를 가져오게 할 것임 || (아직 완성되지 않음) => 포스트 rest api 정리가 끝나지 않았음
-exports.picked = (req, res) => {
-  console.log(req.params.CartName);
+// 특정 카테고리를 선택했을 때의 그 카테고리의 포스트 이름만 가져오게 하는 함수: 오픈 API
+exports.postNames = (req, res) => {
+  const { categoryName } = req.params;
+
+  // 카테고리가 존재할 때 그에 맞는 포스트 찾기
+  const search = exists => {
+    if (exists) {
+      return Category.findPostNames(categoryName);
+    } else {
+      throw new Error('없는 카테고리 값 입니다');
+    }
+  };
+
+  const respond = result => {
+    res.json({
+      success: true,
+      message: 'Succeeded in finding names of posts',
+      result
+    });
+  };
+
+  // 에러가 생겼을 때
+  const onError = error => {
+    res.status(409).json({
+      success: false,
+      message: error.message
+    });
+  };
+
+  Category.findSameCategory(categoryName)
+    .then(search)
+    .then(respond)
+    .catch(onError);
 };
 
 /*
