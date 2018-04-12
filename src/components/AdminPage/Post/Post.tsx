@@ -5,8 +5,10 @@ import { Container, Row, Col, Button } from 'reactstrap';
 import 'react-quill/dist/quill.snow.css'; // ES6
 import 'katex/dist/katex.min.css';
 import 'highlight.js/styles/atom-one-dark.css';
-// 포스트 추가 모듈 불러오기
+// 포스트 추가, 변경, 삭제 모듈 불러오기
 import Add from './../Post/PostAdd/Add';
+import Change from './../Post/PostChange/Change';
+import Delete from './../Post/PostDelete/Delete';
 
 interface ButtonChange {
   currentTarget: { name: string };
@@ -15,16 +17,17 @@ interface ButtonChange {
 interface Category {
   category: string;
 }
-class Post extends React.Component<
-  { loadCategory: Function; category: Array<Category> },
-  {}
-> {
+class Post extends React.Component<{ category: Array<Category> }, {}> {
   state = {
+    // Add, Change, Delete 토글을 눌렀을때 보여질지 안보여질지 보여주는 State
     addShowNone: false,
     changeShowNone: false,
-    deleteShowNone: false
+    deleteShowNone: false,
+    // 특정 카테고리 선택 후의 포스트 이름만 모은 배열
+    posts: [],
   };
 
+  // 에디터 포맷
   formats = [
     'header',
     'font',
@@ -40,9 +43,9 @@ class Post extends React.Component<
     'code-block',
     'link',
     'image',
-    'video'
+    'video',
   ];
-
+  // 에디터 모듈s
   modules = {
     toolbar: [
       [{ header: '1' }, { header: '2' }, { font: [] }],
@@ -52,26 +55,61 @@ class Post extends React.Component<
         { list: 'ordered' },
         { list: 'bullet' },
         { indent: '-1' },
-        { indent: '+1' }
+        { indent: '+1' },
       ],
       ['link', 'image', 'video'],
-      ['clean']
+      ['clean'],
     ],
     clipboard: {
       // toggle to add extra line breaks when pasting HTML:
-      matchVisual: false
+      matchVisual: false,
     },
-    syntax: true
+    syntax: true,
   };
 
   // [공통] 입력값 업데이트
   handleShowNone = (e: ButtonChange) => {
     this.setState({
-      [e.currentTarget.name]: !this.state[e.currentTarget.name]
+      [e.currentTarget.name]: !this.state[e.currentTarget.name],
     });
     console.log(this.state[e.currentTarget.name]);
     // tslint:disable-next-line:semicolon
   };
+
+  // 카테고리 선택시 포스트 불러오는 부분
+  handleSearchCategorysPost = (e: string) => {
+    if (e !== '카테고리 선택') {
+      fetch(`/api/category/getPostNames/${e}`, {
+        method: 'GET',
+        headers: {},
+      })
+        .then(res => res.json())
+        .then(res => {
+          if (res.success === true) {
+            this.setState({
+              posts: res.result.posts,
+            });
+          } else {
+            this.setState({
+              posts: [],
+            });
+          }
+        })
+        .catch((error: string) => {
+          return error;
+        });
+    } else {
+      this.setState({
+        posts: [],
+      });
+    }
+    // tslint:disable-next-line:semicolon
+  };
+
+  // [최적화]
+  shouldComponentUpdate(nextProps: object, nextState: object) {
+    return nextState !== nextProps;
+  }
 
   render() {
     return (
@@ -99,7 +137,6 @@ class Post extends React.Component<
             {/* 포스트 추가 */}
             {this.state.addShowNone && (
               <Add
-                loadCategory={this.props.loadCategory}
                 category={this.props.category}
                 formats={this.formats}
                 modules={this.modules}
@@ -124,11 +161,13 @@ class Post extends React.Component<
           <Col>
             {/* 포스트 변경 */}
             {this.state.changeShowNone && (
-              /*<Add
-                loadCategory={this.props.loadCategory}
+              <Change
+                handleSearchCategorysPost={this.handleSearchCategorysPost}
                 category={this.props.category}
-              />*/
-              <p />
+                formats={this.formats}
+                modules={this.modules}
+                posts={this.state.posts}
+              />
             )}
           </Col>
         </Row>
@@ -149,11 +188,13 @@ class Post extends React.Component<
           <Col>
             {/* 포스트 삭제 */}
             {this.state.deleteShowNone && (
-              /*<Add
-                loadCategory={this.props.loadCategory}
+              <Delete
+                handleSearchCategorysPost={this.handleSearchCategorysPost}
                 category={this.props.category}
-              />*/
-              <p />
+                formats={this.formats}
+                modules={this.modules}
+                posts={this.state.posts}
+              />
             )}
           </Col>
         </Row>

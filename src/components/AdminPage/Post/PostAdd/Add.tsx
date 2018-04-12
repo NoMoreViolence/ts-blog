@@ -1,6 +1,6 @@
 import * as React from 'react';
 import './Add.css';
-import ReactQuill from 'react-quill'; // 리액트 편집기 모듈 다운로드
+import * as ReactQuill from 'react-quill'; // 리액트 편집기 모듈 다운로드
 import {
   Input,
   InputGroup,
@@ -8,7 +8,7 @@ import {
   Dropdown,
   DropdownToggle,
   DropdownMenu,
-  DropdownItem
+  DropdownItem,
 } from 'reactstrap';
 // 리액트 알람
 import { toast } from 'react-toastify';
@@ -30,10 +30,9 @@ interface Dropdown {
 
 class Add extends React.Component<
   {
-    loadCategory: Function;
-    category: Array<Category>;
-    formats: Array<string>;
-    modules: object;
+    category: Array<Category>,
+    formats: Array<string>,
+    modules: object,
   },
   {}
 > {
@@ -46,20 +45,20 @@ class Add extends React.Component<
     editorState: '', // [마크다운 에디터]
 
     tempSavedCategory: '임시저장된 포스트 선택',
-    categorySavedDropdown: false // [추가할 카테고리 드롭다운 버튼]
+    categorySavedDropdown: false, // [추가할 카테고리 드롭다운 버튼]
   };
 
   // 글자 state 업데이트
   handleChange = (e: TextEdit) => {
     this.setState({
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
     // tslint:disable-next-line:semicolon
   };
   // 에디터 state 업데이트
   handleEditorChange = (e: string) => {
     this.setState({
-      editorState: e
+      editorState: e,
     });
     // tslint:disable-next-line:semicolon
   };
@@ -67,14 +66,14 @@ class Add extends React.Component<
   // [현재 드롭다운 토글] 카테고리 나오고 안나오고
   handleCategoryChangeToggle = () => {
     this.setState({
-      categoryChangeDropdown: !this.state.categoryChangeDropdown
+      categoryChangeDropdown: !this.state.categoryChangeDropdown,
     });
     // tslint:disable-next-line:semicolon
   };
   // [임시저장 드롭다운 토글] 카테고리 나오고 안나오고
   handleSavedCategoryChangeToggle = () => {
     this.setState({
-      categorySavedDropdown: !this.state.categorySavedDropdown
+      categorySavedDropdown: !this.state.categorySavedDropdown,
     });
     // tslint:disable-next-line:semicolon
   };
@@ -106,24 +105,30 @@ class Add extends React.Component<
       fetch('/api/post/create', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           token: sessionStorage.getItem('token'), // JWT 토큰
           category: currentCategory.trim(), // 현재 카테고리
           title: title.trim(), // 타이틀
           subTitle: subTitle.trim(), // 서브 타이틀
-          mainText: editorState // 메인 내용
+          mainText: editorState, // 메인 내용
         }),
-        mode: 'cors'
+        mode: 'cors',
       })
         .then(res => res.json())
         .then(res => {
           if (res.success === true) {
             // 포스트 추가 성공일 때
             console.log(res.message);
-            toast('포스트가 추가 성공!');
-            console.log(res.result);
+            toast('포스트 추가 성공!');
+            // 전송 성공 후 State 초기화
+            this.setState({
+              currentCategory: '추가할 카테고리 선택',
+              title: '',
+              subTitle: '',
+              editorState: '',
+            });
           } else {
             // 포스트 추가 실패
             console.log(res.message);
@@ -140,6 +145,10 @@ class Add extends React.Component<
     }
     // tslint:disable-next-line:semicolon
   };
+  // [최적화]
+  shouldComponentUpdate(nextProps: object, nextState: object) {
+    return nextState !== this.state;
+  }
 
   render() {
     // state 정의
@@ -149,7 +158,7 @@ class Add extends React.Component<
       currentCategory, // 추가할 카테고리 현재
       categoryChangeDropdown, // 추가할 카테고리 누르면 드롭다운 ㄱ
       tempSavedCategory, // 임시 저장 카테고리
-      categorySavedDropdown // 임시 저장된 카테고리 누르면 드롭다운
+      categorySavedDropdown, // 임시 저장된 카테고리 누르면 드롭다운
     } = this.state;
 
     // 데이터 받아서 정렬

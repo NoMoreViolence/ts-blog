@@ -5,7 +5,7 @@ import Post from './Post/Post';
 // import Post from './Post/Post';
 
 class AdminPage extends React.Component<
-  { loadCategory: Function; category: Array<Category> },
+  { loadCategory: Function, category: Array<Category> },
   {}
 > {
   shouldComponentUpdate(nextProps: {}, nextState: {}) {
@@ -26,10 +26,7 @@ class AdminPage extends React.Component<
         <Row>
           <Col>
             {/* 포스트 추가, 변경, 삭제 부분 */}
-            <Post
-              loadCategory={this.props.loadCategory}
-              category={this.props.category}
-            />
+            <Post category={this.props.category} />
           </Col>
         </Row>
       </Container>
