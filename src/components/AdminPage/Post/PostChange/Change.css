@@ -1,0 +1,19 @@
+.change-container {
+  margin-top: 1%;
+  margin-bottom: 4%;
+}
+.change-toogle { 
+  display: flex;
+}
+.change-posts-choice-dropdown{
+  margin-left: 4%;
+}
+.change-dropdown-and-input {
+  margin-top: 2%;
+}
+.subtitle-input {
+  margin-top: 2%;
+}
+.change-editor {
+  margin-top: 2%;
+}
