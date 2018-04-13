@@ -3,7 +3,7 @@ const controller = require('./post.controller');
 const authMiddleware = require('./../../../middlewares/auth');
 
 // GET 카테고리 리스트 출력 OR 특정 카테고리 리스트 출력
-// router.get('/all', controller.all);
+router.get('/allPosts', controller.allPosts);
 // 포스트 데이터 불러오기
 router.get('/:title', controller.post);
 

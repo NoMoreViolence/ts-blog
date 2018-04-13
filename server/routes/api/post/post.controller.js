@@ -2,6 +2,38 @@ const Post = require('./../../../models/Post');
 const Category = require('./../../../models/Category');
 
 /*
+    GET /api/post/allPosts
+    {}
+*/
+// 모든 포스트의 정보 가져오기
+exports.allPosts = (req, res) => {
+  const respond = result => {
+    if (result) {
+      // 포스트가 한개라도 존재할 때
+      res.json({
+        success: true,
+        result,
+      });
+    } else {
+      // 포스트가 존재하지 않을 때
+      throw new Error('포스트가 존재하지 않습니다');
+    }
+  };
+
+  const onError = error => {
+    res.status(409).json({
+      success: false,
+      message: error.message,
+      result: [],
+    });
+  };
+
+  Post.viewMainPage()
+    .then(respond)
+    .catch(onError);
+};
+
+/*
     GET /api/post/:postName
     {}
 */

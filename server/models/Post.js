@@ -17,6 +17,19 @@ const Post = new Schema({
   date: { type: Date, default: Date.now }, // 포스팅 날짜
 });
 
+// 모든 포스트의
+Post.statics.viewMainPage = function() {
+  // 포스트의 카테고리, 타이틀, 부제목만 리턴
+  return this.find(
+    {},
+    {
+      title: 1,
+      subTitle: 1,
+      category: 1,
+    }
+  ).exec();
+};
+
 // 포스트 이름 중복 체크, 포스트 이름 찾기
 Post.statics.checkTitle = function(title) {
   return this.findOne({ title }).exec();
