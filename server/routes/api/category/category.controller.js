@@ -17,7 +17,7 @@ exports.all = (req, res) => {
     res.json({
       success: true,
       message: 'View All Categories',
-      category: result
+      category: result,
     });
   };
 
@@ -25,7 +25,7 @@ exports.all = (req, res) => {
   const onError = error => {
     res.status(409).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   };
 
@@ -35,7 +35,7 @@ exports.all = (req, res) => {
 };
 
 /*
-    GET /api/category/postNames/:categoryName
+    GET /api/post/postNames/:categoryName
     {}
 */
 // 특정 카테고리를 선택했을 때의 그 카테고리의 포스트 이름만 가져오게 하는 함수: 오픈 API
@@ -55,7 +55,7 @@ exports.postNames = (req, res) => {
     res.json({
       success: true,
       message: 'Succeeded in finding names of posts',
-      result
+      result,
     });
   };
 
@@ -63,7 +63,7 @@ exports.postNames = (req, res) => {
   const onError = error => {
     res.status(409).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   };
 
@@ -98,7 +98,7 @@ exports.create = (req, res) => {
     res.json({
       success: true,
       message: 'Create Category Success',
-      category
+      category,
     });
   };
 
@@ -106,7 +106,7 @@ exports.create = (req, res) => {
   const onError = error => {
     res.status(409).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   };
 
@@ -155,7 +155,7 @@ exports.change = (req, res) => {
       message: `Change Category Success => ${category} to ${changeCategory}`,
       oldCategory: category,
       newCategory: changeCategory,
-      result
+      result,
     });
   };
 
@@ -163,7 +163,7 @@ exports.change = (req, res) => {
   const onError = error => {
     res.status(409).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   };
 
@@ -207,7 +207,7 @@ exports.delete = (req, res) => {
     res.json({
       success: true,
       message: 'Delete Category Success',
-      category
+      category,
     });
   };
 
@@ -215,7 +215,7 @@ exports.delete = (req, res) => {
   const onError = error => {
     res.status(409).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   };
 

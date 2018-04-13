@@ -5,13 +5,8 @@ const Schema = mongoose.Schema;
 // 카테고리 스키마
 const Category = new Schema({
   category: { type: String, required: true, unique: true }, // 카테고리 이름, 필수, 유니크함, 공백을 없앰
-  posts: [{ type: Schema.Types.ObjectId, ref: 'post' }] // 포스트 populate 사용 하기 위해서 ref로 포스트들 저장될 디비를 가리킴 허허
+  posts: [{ type: Schema.Types.ObjectId, ref: 'post' }], // 포스트 populate 사용 하기 위해서 ref로 포스트들 저장될 디비를 가리킴 허허
 });
-
-// 카테고리 중복 체크
-Category.statics.findSameCategory = function(category) {
-  return this.findOne({ category }).exec();
-};
 
 // 전체 카테고리 출력
 Category.statics.findAll = function() {
@@ -20,17 +15,29 @@ Category.statics.findAll = function() {
     .exec();
 };
 
+Category.statics.findPostNames = function(category) {
+  // 이렇게 하면 posts의 title 값만 가져올 수 있습니다
+  return this.findOne({ category })
+    .populate('posts', 'title')
+    .exec();
+};
+
+// 카테고리 중복 체크
+Category.statics.findSameCategory = function(category) {
+  return this.findOne({ category }).exec();
+};
+
 // 카테고리 생성
 Category.statics.createCategory = function(category) {
   const Cart = new this({
-    category
+    category,
   });
 
   return Cart.save();
 };
 
 // 카테고리 변경
-Category.statics.changeCategory = async function(category, changeCategory) {
+Category.statics.changeCategory = function(category, changeCategory) {
   return this.findOneAndUpdate(
     { category },
     { category: changeCategory }
@@ -43,13 +50,9 @@ Category.statics.deleteCategory = function(category) {
 };
 
 // 포스트들의 정보가 변경(추가, 변경, 삭제) 되었을 때 Ref 한번에 정리해버리는 함수
-Category.statics.update = async function(newPosts, category) {
+Category.statics.update = function(newPosts, category) {
   // 일단 posts를 업데이트 하네요 이게 먼저 되야해서 await 걸어 주었습니다
-  await this.findOneAndUpdate({ category }, { posts: newPosts });
-
-  return this.findOne({ category })
-    .populate('posts')
-    .exec();
+  return this.findOneAndUpdate({ category }, { posts: newPosts });
 };
 
 // 익스포트

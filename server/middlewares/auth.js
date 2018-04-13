@@ -7,12 +7,13 @@ const authMiddleware = (req, res, next) => {
     req.query.token ||
     req.body.token
   ).replace(/"/g, '');
+  console.log('hello');
 
   // 토큰이 존재하지 않는다면
   if (!token) {
     return res.status(403).json({
       success: false,
-      message: 'Not Logged In'
+      message: 'Not Logged In',
     });
   }
 
@@ -28,7 +29,7 @@ const authMiddleware = (req, res, next) => {
   const onError = error => {
     res.status(403).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   };
 

@@ -19,6 +19,8 @@ app.use(bodyParser.json({ limit: '50mb' }));
 app.use(morgan('dev'));
 // 예 이걸로 시크릿키 받아오구요
 app.set('jwt-secret', config.secret);
+// 모든 api의 요청과 반환을 돌렸습니다
+app.use('/api', require('./routes/api'));
 // 빌드 파일 입니당 이걸로 리액트 클라이언트 파일 끌어와요
 app.use(express.static(path.join(__dirname, '../build')));
 
@@ -43,9 +45,6 @@ db.once('open', () => {
   // we're connected!
   console.log("We're connnected");
 });
-
-// 모든 api의 요청과 반환을 돌렸습니다
-app.use('/api', require('./routes/api'));
 
 // 서버 열어 버리기~
 app.listen(port, () => {
