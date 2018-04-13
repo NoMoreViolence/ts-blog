@@ -2,3 +2,20 @@
 .App {
   font-family: 'Do Hyeon', sans-serif;
 }
+@media all and (max-width: 425px) {
+  /* 마크다운 코드 부분 */
+  .ql-syntax {
+    font-size: 0.8rem;
+    color: #abb2bf;
+    background-color: #282c34 !important;
+  }
+}
+
+@media all and (min-width: 426px) {
+  /* 마크다운 코드 부분 */
+  .ql-syntax {
+    font-size: 1rem;
+    color: #abb2bf;
+    background-color: #282c34 !important;
+  }
+}
