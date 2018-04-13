@@ -7,6 +7,7 @@ import './App.css';
 import Header from './components/Header/Header';
 import AdminPage from './components/AdminPage/AdminPage';
 import Login from './components/Login/Login';
+import Main from './components/MainPage/Main';
 
 // 알림
 import { ToastContainer, toast } from 'react-toastify';
@@ -14,13 +15,14 @@ import { ToastContainer, toast } from 'react-toastify';
 // 으어어어어리액트야
 class App extends React.Component<{}, {}> {
   state = {
-    logined: 0,
-    category: []
+    logined: 0, // 로그인 확인 변수
+    category: [], // 모든 카테고리
+    allPost: [], // 모든 포스트의 타이틀, 부제목, 카테고리
   };
 
   handleUpdate = (num: number) => {
     this.setState({
-      logined: num
+      logined: num,
     });
     // 상태 바
     this.notify(num);
@@ -42,8 +44,8 @@ class App extends React.Component<{}, {}> {
       fetch('/api/auth/check', {
         method: 'GET',
         headers: {
-          'x-access-token': `${sessionStorage.getItem('token')}`
-        }
+          'x-access-token': `${sessionStorage.getItem('token')}`,
+        },
       })
         .then(res => res.json())
         .then(res => {
@@ -52,7 +54,7 @@ class App extends React.Component<{}, {}> {
             console.log('현재 관리자 상태 - App.tsx');
             this.notify(1);
             this.setState({
-              logined: 1
+              logined: 1,
             });
           } else {
             // tslint:disable-next-line:no-console
@@ -75,15 +77,15 @@ class App extends React.Component<{}, {}> {
   loadCategory = () => {
     fetch('/api/category/all', {
       method: 'GET',
-      headers: {}
+      headers: {},
     })
+      .then(res => res.json())
       .then(res => {
-        return res.json();
-      })
-      .then(res => {
-        this.setState({
-          category: res.category
-        });
+        if (res.success === true) {
+          this.setState({
+            category: res.category,
+          });
+        }
       })
       .catch((error: string) => {
         // tslint:disable-next-line:no-console
@@ -94,33 +96,73 @@ class App extends React.Component<{}, {}> {
     // tslint:disable-next-line:semicolon
   };
 
+  // 모든 포스트의 타이틀, 카테고리, 부제목만 불러옴
+  handlePostTitleAndSubTitle = () => {
+    console.log('메인 페이지 포스트 로딩 시작');
+    fetch(`/api/post/allPosts`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(res => res.json())
+      .then(res => {
+        console.log('메인 페이지 포스트 로딩 성공');
+        this.setState({
+          allPost: res.result,
+        });
+      })
+      .catch(error => {
+        console.log('메인 페이지 포스트 로딩 실패 - > 서버의 오류');
+        console.log(error.message);
+        toast('서버에서 데이터를 불러오는 도중 에러 발생');
+      });
+    // tslint:disable-next-line:semicolon
+  };
+
   // 모든 컴포넌트 출력된 후 확인
   componentDidMount() {
-    this.loadCategory();
+    // 관리자 로그인 체크
     this.handleCheck();
+    // 카테고리 로딩
+    this.loadCategory();
+    // 메인 페이지 포스트 로딩
+    this.handlePostTitleAndSubTitle();
   }
 
+  // componentDidUpdate
+  componentDidUpdate(prevProps: object, prevState: object) {
+    // hello
+  }
+
+  // scu
   shouldComponentUpdate(nextProps: {}, nextState: {}) {
-    return nextProps !== this.state;
+    return nextState !== this.state;
   }
 
   render() {
-    const { logined } = this.state;
+    const { logined, allPost, category } = this.state;
 
     return (
       <BrowserRouter>
         <div className="App">
           {/* 알림 보여주는 HTML 태크, 이것만 해 놓으면 알림 뜰때 자동으로 생겼다가 사라짐 */}
           <ToastContainer />
+          {/* 헤더 */}
           <Header
             login={logined}
             changeLogined={this.handleUpdate}
-            category={this.state.category}
+            category={category}
+            handlePostTitleAndSubTitle={this.handlePostTitleAndSubTitle}
           />
           <Switch>
-            {/* <Route exact={true} path="/" component={Main}/> */}
+            {/* 메인 페이지 */}
+            <Route
+              exact={true}
+              path="/"
+              render={props => <Main allPost={allPost} />}
+            />
           </Switch>
-          {/* 검색결과 <Route exact={true} path="/search/:what" component={SearchResult} /> */}
           <Switch>
             {/* 어드민 페이지 로그인 jwt 토큰 받을 때 */}
             <Route
@@ -139,7 +181,7 @@ class App extends React.Component<{}, {}> {
                 render={props => (
                   <AdminPage
                     loadCategory={this.loadCategory}
-                    category={this.state.category}
+                    category={category}
                     {...props}
                   />
                 )}

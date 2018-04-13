@@ -14,7 +14,12 @@ interface Category {
 }
 
 class Header extends React.Component<
-  { login: number, changeLogined: Function, category: Array<Category> },
+  {
+    login: number,
+    changeLogined: Function,
+    category: Array<Category>,
+    handlePostTitleAndSubTitle: Function,
+  },
   { message: string }
 > {
   state = {
@@ -43,7 +48,9 @@ class Header extends React.Component<
       <Container>
         <Row>
           <Col>
-            <HeaderLogo />
+            <HeaderLogo
+              handlePostTitleAndSubTitle={this.props.handlePostTitleAndSubTitle}
+            />
           </Col>
           <Col>
             <CategoryView
