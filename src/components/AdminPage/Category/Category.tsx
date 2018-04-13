@@ -8,6 +8,7 @@ import { Container, Row, Col, Breadcrumb, BreadcrumbItem } from 'reactstrap';
 // 현재 카테고리 데이터 가져오기
 interface Category {
   category: string;
+  hello: boolean;
 }
 
 class Category extends React.Component<

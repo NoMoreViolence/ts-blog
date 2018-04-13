@@ -44,6 +44,8 @@ class ChangePost extends React.Component<
     editorState: string, // 에디터 Props
     formats: Array<string>, // Quill
     modules: object, // Quill
+    handleSearchCategorysPost: Function, // 포스트 전송 성공 후 변경용
+    originFun: Function,
   },
   {}
 > {
@@ -116,15 +118,10 @@ class ChangePost extends React.Component<
         .then(res => {
           if (res.success === true) {
             toast('포스트 수정 성공!');
-            // 전송 성공 후 State 초기화
-            this.setState({
-              currentCategory: '카테고리 선택',
-              title: '',
-              subTitle: '',
-              editorState: '',
-            });
+            this.props.handleSearchCategorysPost('카테고리 선택', 'change');
+            this.props.originFun(1);
           } else {
-            toast('포스트 추가 실패!');
+            toast('포스트 수정 실패!');
             toast(res.message);
           }
         })

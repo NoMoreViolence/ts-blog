@@ -9,13 +9,13 @@ interface HandleChangeInterface {
 
 class Add extends React.Component<{ loadCategory: Function }, {}> {
   state = {
-    addValue: '' // [추가할 카테고리 값]
+    addValue: '', // [추가할 카테고리 값]
   };
 
   // [공통]입력값 업데이트
   handleChange = (e: HandleChangeInterface) => {
     this.setState({
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
     // tslint:disable-next-line:semicolon
   };
@@ -31,18 +31,18 @@ class Add extends React.Component<{ loadCategory: Function }, {}> {
       fetch('/api/category/create', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           token: sessionStorage.getItem('token'),
-          category: this.state.addValue.trim()
+          category: this.state.addValue.trim(),
         }),
-        mode: 'cors'
+        mode: 'cors',
       })
         .then(res => res.json())
         .then(res => {
           this.setState({
-            addValue: ''
+            addValue: '',
           });
           if (res.success === true) {
             toast('" ' + res.category + ' " 카테고리가 추가 되었습니다');

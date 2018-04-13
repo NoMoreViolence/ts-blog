@@ -194,9 +194,6 @@ class Add extends React.Component<
               <DropdownItem onClick={this.handleSavedCurrentCategory}>
                 임시저장된 포스트 선택
               </DropdownItem>
-              <DropdownItem onClick={this.handleSavedCurrentCategory}>
-                하하호호 테스트
-              </DropdownItem>
               {/* 임시저장 포스트 클릭시 포스트 데이터 불러옴 */}
               {/* tempSavedCategoryChangeBar() */}
             </DropdownMenu>

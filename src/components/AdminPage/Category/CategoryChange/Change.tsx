@@ -52,7 +52,7 @@ class Change extends React.Component<
       CurrentCategory.trim() !== changeCategory.trim()
     ) {
       fetch('/api/category/change', {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
         },

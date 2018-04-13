@@ -24,7 +24,8 @@ class Post extends React.Component<{ category: Array<Category> }, {}> {
     changeShowNone: false,
     deleteShowNone: false,
     // 특정 카테고리 선택 후의 포스트 이름만 모은 배열
-    posts: [],
+    changePosts: [],
+    deletePosts: [],
   };
 
   // 에디터 포맷
@@ -77,9 +78,10 @@ class Post extends React.Component<{ category: Array<Category> }, {}> {
   };
 
   // 카테고리 선택시 포스트 불러오는 부분
-  handleSearchCategorysPost = (e: string) => {
-    if (e !== '카테고리 선택') {
-      fetch(`/api/category/getPostNames/${e}`, {
+  handleSearchCategorysPost = async (category: string, type: string) => {
+    const value = type + 'Posts';
+    if (category !== '카테고리 선택') {
+      fetch(`/api/category/getPostNames/${category}`, {
         method: 'GET',
         headers: {},
       })
@@ -87,11 +89,11 @@ class Post extends React.Component<{ category: Array<Category> }, {}> {
         .then(res => {
           if (res.success === true) {
             this.setState({
-              posts: res.result.posts,
+              [value]: res.result.posts,
             });
           } else {
             this.setState({
-              posts: [],
+              [value]: [],
             });
           }
         })
@@ -100,7 +102,7 @@ class Post extends React.Component<{ category: Array<Category> }, {}> {
         });
     } else {
       this.setState({
-        posts: [],
+        [value]: [],
       });
     }
     // tslint:disable-next-line:semicolon
@@ -166,7 +168,7 @@ class Post extends React.Component<{ category: Array<Category> }, {}> {
                 category={this.props.category}
                 formats={this.formats}
                 modules={this.modules}
-                posts={this.state.posts}
+                posts={this.state.changePosts}
               />
             )}
           </Col>
@@ -193,7 +195,7 @@ class Post extends React.Component<{ category: Array<Category> }, {}> {
                 category={this.props.category}
                 formats={this.formats}
                 modules={this.modules}
-                posts={this.state.posts}
+                posts={this.state.deletePosts}
               />
             )}
           </Col>
