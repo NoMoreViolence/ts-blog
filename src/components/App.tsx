@@ -4,10 +4,12 @@ import * as React from 'react';
 import './App.css';
 
 // 컴포넌트들
-import Header from './components/Header/Header';
-import AdminPage from './components/AdminPage/AdminPage';
-import Login from './components/Login/Login';
-import Main from './components/MainPage/Main';
+import Header from './Header/Header';
+import AdminPage from './AdminPage/AdminPage';
+import Login from './Login/Login';
+import Main from './MainPage/Main';
+import SelectCategory from './PostView/SelectCategory/SelectCategory';
+import SelectPost from './PostView/SelectPost/SelectPost';
 
 // 알림
 import { ToastContainer, toast } from 'react-toastify';
@@ -155,6 +157,8 @@ class App extends React.Component<{}, {}> {
             category={category}
             handlePostTitleAndSubTitle={this.handlePostTitleAndSubTitle}
           />
+          {/* 헤더 */}
+          {/* 카테고리별 포스트, 전체 포스트, 특정 포스트 */}
           <Switch>
             {/* 메인 페이지 */}
             <Route
@@ -163,6 +167,22 @@ class App extends React.Component<{}, {}> {
               render={props => <Main allPost={allPost} />}
             />
           </Switch>
+          <Switch>
+            {/* 카테고리 선택 && 포스트 선택 시 보여지는 페이지 */}
+            <Route
+              exact={true}
+              path="/category/:categoryName/:postName"
+              render={props => <SelectPost {...props} />}
+            />
+            {/* 카테고리 선택 시 보여지는 페이지 */}
+            <Route
+              exact={true}
+              path="/category/:categoryName"
+              render={props => <SelectCategory {...props} />}
+            />
+          </Switch>
+          {/* 카테고리별 포스트, 전체 포스트, 특정 포스트 */}
+          {/* 관리자 페이지 */}
           <Switch>
             {/* 어드민 페이지 로그인 jwt 토큰 받을 때 */}
             <Route
@@ -182,12 +202,12 @@ class App extends React.Component<{}, {}> {
                   <AdminPage
                     loadCategory={this.loadCategory}
                     category={category}
-                    {...props}
                   />
                 )}
               />
             )}
           </Switch>
+          {/* 관리자 페이지 */}
         </div>
       </BrowserRouter>
     );

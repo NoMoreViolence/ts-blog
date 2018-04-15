@@ -27,7 +27,9 @@ Post.statics.viewMainPage = function() {
       subTitle: 1,
       category: 1,
     }
-  ).exec();
+  )
+    .sort({ date: -1 })
+    .exec();
 };
 
 // 포스트 이름 중복 체크, 포스트 이름 찾기

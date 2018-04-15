@@ -102,7 +102,6 @@ class Delete extends React.Component<
       this.state.selectPost === this.state.doubleCheck &&
       this.state.selectPost !== '포스트 선택'
     ) {
-      console.log(sessionStorage.getItem('token'));
       fetch('/api/post/delete', {
         method: 'DELETE',
         headers: {

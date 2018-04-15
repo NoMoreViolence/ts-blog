@@ -45,7 +45,7 @@ class Header extends React.Component<
 
   render() {
     return (
-      <Container>
+      <Container className="header-container">
         <Row>
           <Col>
             <HeaderLogo

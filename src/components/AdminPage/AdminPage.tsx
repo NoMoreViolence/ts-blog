@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Container, Row, Col } from 'reactstrap';
-import Category from './Category/Category';
-import Post from './Post/Post';
+import Category from './Category/AdminCategory';
+import Post from './Post/AdminPost';
 // import Post from './Post/Post';
 
 class AdminPage extends React.Component<

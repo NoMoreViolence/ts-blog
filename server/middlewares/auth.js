@@ -7,7 +7,6 @@ const authMiddleware = (req, res, next) => {
     req.query.token ||
     req.body.token
   ).replace(/"/g, '');
-  console.log('hello');
 
   // 토큰이 존재하지 않는다면
   if (!token) {
