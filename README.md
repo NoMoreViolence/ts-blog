@@ -1,13 +1,9 @@
 # IHP Blog
 
-## 이 블로그는 제 개인적인 공부 포스팅 용도를 위해서 만들어진 블로그 입니다
+### 프로젝트를 하는 도중 리덕스를 사용하기로 결정했습니다.
 
-> 사용된 기술들
->
-> Web-Front => React.js with TypeScript
->
-> Web-Back => Node.js
->
-> DataBase => MongoDB
+### 이 Repository는 폐기 처리 되었습니다.
 
-### 오픈 API
+### 최종 프로젝트는 typescript-blog 프로젝트 입니다
+
+### 새 프로젝트 주소: https://github.com/NoMoreViolence/typescript-blog
